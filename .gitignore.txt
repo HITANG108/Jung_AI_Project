@@ -1,0 +1,14 @@
+# 忽略系统生成文件
+__pycache__/
+*.pyc
+
+# 忽略虚拟环境 (非常重要，不要上传几百兆的库)
+jung_env/
+.venv/
+env/
+
+# 忽略本地的数据缓存
+.chroma/
+
+# 忽略本地密钥文件 (如果有)
+.streamlit/secrets.toml

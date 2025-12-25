@@ -1,0 +1,12 @@
+[theme]
+base = "light"
+primaryColor = "#8B4513"  # 赭石色，一种古老的墨水颜色，比纯黑更有质感
+backgroundColor = "#F9F7F2" # 米白色 (Rice White / Antique White)
+secondaryBackgroundColor = "#F0EBE5" # 稍微深一点的米灰，用于卡片背景
+textColor = "#2C2C2C" # 炭灰色，比纯黑柔和
+font = "serif" # 衬线体，自带书卷气
+
+[server]
+runOnSave = true
+[client]
+showSidebarNavigation = false # 【关键】这行代码会彻底隐藏默认的侧边栏导航！
