@@ -1,3 +1,12 @@
+# --- 关键补丁：解决 Streamlit Cloud 的 SQLite 版本问题 ---
+import sys
+try:
+    __import__('pysqlite3')
+    sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+except ImportError:
+    pass
+# -------------------------------------------------------
+
 import streamlit as st
 import os
 import textwrap # <--- 【新增】用于修复HTML缩进问题
@@ -6,7 +15,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_openai import ChatOpenAI
-from langchain.chains import create_retrieval_chain
+
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
 # 【新增】引入两个关键的 LCEL 组件
@@ -14,7 +23,7 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 
 from operator import itemgetter # 【关键新增】引入这把“镊子”
-
+#from langchain.chains import create_retrieval_chain
 
 # ==========================================
 # 1. API 配置 (云端安全版)

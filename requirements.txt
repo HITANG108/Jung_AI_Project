@@ -8,3 +8,4 @@ langchain-text-splitters
 chromadb
 chardet
 textwrap3
+pysqlite3-binary
