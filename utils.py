@@ -164,7 +164,7 @@ def get_jung_brain():
         st.error(f"❌ 依赖库加载失败，请检查 requirements.txt: {e}")
         return None
 
-    book_path = "./data/Men and His Symbols.txt"
+    book_path = "./data/Man and His Symbols.txt"
     if not os.path.exists(book_path):
         st.error(f"❌ 找不到书籍文件：{book_path}")
         return None
