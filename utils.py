@@ -10,20 +10,7 @@ except ImportError:
 import streamlit as st
 import os
 import textwrap # <--- 【新增】用于修复HTML缩进问题
-from langchain_community.document_loaders import TextLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_community.vectorstores import Chroma
-from langchain_openai import ChatOpenAI
-
-from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain_core.prompts import ChatPromptTemplate
-# 【新增】引入两个关键的 LCEL 组件
-from langchain_core.runnables import RunnablePassthrough
-from langchain_core.output_parsers import StrOutputParser
-
 from operator import itemgetter # 【关键新增】引入这把“镊子”
-#from langchain.chains import create_retrieval_chain
 
 # ==========================================
 # 1. API 配置 (云端安全版)
@@ -155,14 +142,29 @@ def render_navbar():
     st.markdown("<hr style='margin-top: 20px; margin-bottom: 40px; border: none; border-top: 1px solid #E6E6E6;'>", unsafe_allow_html=True)
 
 # ==========================================
-# 4. 荣格大脑 (修复版)
+# 4. 荣格大脑 (安全加载版)
 # ==========================================
 def format_docs(docs):
     return "\n\n".join(doc.page_content for doc in docs)
 
 @st.cache_resource
 def get_jung_brain():
-    book_path = "./data/Man and His Symbols.txt"
+    # 【关键修改】所有的重型库都在函数内部导入
+    # 这样即使它们加载失败，也不会导致主页打不开
+    try:
+        from langchain_community.document_loaders import TextLoader
+        from langchain_text_splitters import RecursiveCharacterTextSplitter
+        from langchain_huggingface import HuggingFaceEmbeddings
+        from langchain_community.vectorstores import Chroma
+        from langchain_openai import ChatOpenAI
+        from langchain_core.prompts import ChatPromptTemplate
+        from langchain_core.runnables import RunnablePassthrough
+        from langchain_core.output_parsers import StrOutputParser
+    except ImportError as e:
+        st.error(f"❌ 依赖库加载失败，请检查 requirements.txt: {e}")
+        return None
+
+    book_path = "./data/Men and His Symbols.txt"
     if not os.path.exists(book_path):
         st.error(f"❌ 找不到书籍文件：{book_path}")
         return None
@@ -194,8 +196,6 @@ def get_jung_brain():
             ("human", "{input}"),
         ])
         
-        # 【关键修复】使用 itemgetter 提取 "input"
-        # 意思就是：从用户输入的字典里，只把 "input" 里的文字拿出来给 retriever
         rag_chain = (
             {
                 "context": itemgetter("input") | retriever | format_docs,
@@ -208,9 +208,8 @@ def get_jung_brain():
         return rag_chain
 
     except Exception as e:
-        st.error(f"❌ 系统初始化失败: {e}")
+        st.error(f"❌ 系统初始化失败 (可能是数据库兼容性问题): {e}")
         return None
-    
 
 # ==========================================
 # 5. 全局页脚 (修复版：HTML渲染 + 全站通用)
